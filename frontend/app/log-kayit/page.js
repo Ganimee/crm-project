@@ -25,7 +25,7 @@ import {
 
 import { useTheme } from '../context/ThemeContext';
 
-const API_URL = 'http://127.0.0.1:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function YetkiPage() {
   const { isDarkMode } = useTheme();
@@ -72,7 +72,7 @@ export default function YetkiPage() {
       params.append('search', searchTerm.trim());
     }
 
-    const res = await fetch(`${API_URL}/logs?${params.toString()}`);
+    const res = await fetch(`${API_BASE}/logs?${params.toString()}`);
 
     const text = await res.text();
 
@@ -94,7 +94,7 @@ export default function YetkiPage() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch(`${API_URL}/logs/stats`);
+      const res = await fetch(`${API_BASE}/logs/stats`);
 
       if (!res.ok) {
         throw new Error('Log istatistikleri alınamadı.');
@@ -122,8 +122,8 @@ export default function YetkiPage() {
       }
 
       const url = params.toString()
-        ? `${API_URL}/logs/users?${params.toString()}`
-        : `${API_URL}/logs/users`;
+       ? `${API_BASE}/logs/users?${params.toString()}`
+        : `${API_BASE}/logs/users`;
 
       const res = await fetch(url);
 
@@ -275,7 +275,7 @@ const exportCsv = async () => {
     null;
 
   try {
-    await fetch(`${API_URL}/raporlar/export-log`, {
+    await fetch(`${API_BASE}/raporlar/export-log`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -48,16 +48,18 @@ export default function YetkilendirmePage() {
     setTimeout(() => setNotification(null), 2500);
   };
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   const fetchYetkiData = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
 
       const [usersRes, rolesRes] = await Promise.all([
-        fetch('http://127.0.0.1:8000/auth/users', {
+        fetch(`${API_BASE}/auth/users`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch('http://127.0.0.1:8000/auth/roles-permissions', {
+        fetch(`${API_BASE}/auth/roles-permissions`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -155,7 +157,7 @@ export default function YetkilendirmePage() {
       const token = localStorage.getItem('token');
 
       const res = await fetch(
-        `http://127.0.0.1:8000/auth/roles/${selectedRole.id}/permissions`,
+        `${API_BASE}/auth/roles/${selectedRole.id}/permissions`,
         {
           method: 'PUT',
           headers: {
@@ -227,8 +229,8 @@ export default function YetkilendirmePage() {
     const token = localStorage.getItem('token');
 
     const url = editingUser
-      ? `http://127.0.0.1:8000/auth/users/${editingUser.id}`
-      : 'http://127.0.0.1:8000/auth/users';
+      ? `${API_BASE}/auth/users/${editingUser.id}`
+      : `${API_BASE}/auth/users`;;
 
     const method = editingUser ? 'PUT' : 'POST';
 
@@ -274,7 +276,7 @@ export default function YetkilendirmePage() {
     const token = localStorage.getItem('token');
 
     const res = await fetch(
-      `http://127.0.0.1:8000/auth/users/${editingUser.id}`,
+      `${API_BASE}/auth/users/${editingUser.id}`,
       {
         method: 'DELETE',
         headers: {

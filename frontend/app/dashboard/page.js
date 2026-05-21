@@ -46,7 +46,7 @@ import { useTheme } from '../context/ThemeContext';
 
 
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const COLORS = ['#ef4444', '#dc2626', '#b91c1c', '#991b1b', '#7f1d1d', '#450a0a'];
 

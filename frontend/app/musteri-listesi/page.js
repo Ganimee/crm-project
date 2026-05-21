@@ -91,7 +91,7 @@ export default function MusteriListesiPage() {
 
         if (!token) return;
 
-        const res = await fetch('http://127.0.0.1:8000/customers/filters', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/customers/filters`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -161,7 +161,7 @@ export default function MusteriListesiPage() {
         if (maxReturns !== '') params.append('max_returns', maxReturns);
 
         const res = await fetch(
-          `http://127.0.0.1:8000/customers?${params.toString()}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/customers?${params.toString()}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -291,7 +291,7 @@ export default function MusteriListesiPage() {
       if (risk !== 'Tümü') params.append('risk', risk);
 
       const res = await fetch(
-        `http://127.0.0.1:8000/customers/export?${params.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/customers/export?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

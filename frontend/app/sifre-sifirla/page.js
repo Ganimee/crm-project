@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
   Lock,
   Eye,
@@ -17,6 +17,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTheme } from '../context/ThemeContext';
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Yükleniyor...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -70,7 +78,7 @@ export default function ResetPasswordPage() {
     setStatus({ type: null, message: '' });
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/auth/reset-password', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
