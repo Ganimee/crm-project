@@ -8,3 +8,4 @@ pymysql
 pandas
 openpyxl
 requests
+mysql-connector-python
