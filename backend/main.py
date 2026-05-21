@@ -7784,7 +7784,6 @@ def dashboard_orders(
         cursor.close()
         conn.close()
 
-#=========================================================
 @app.get("/dashboard/customers")
 def dashboard_customers(
     start_date: Optional[str] = None,
@@ -7906,6 +7905,12 @@ def dashboard_customers(
             LEFT JOIN ltv_tahminleri l ON l.musteri_id = m.musteri_id
         """
 
+        ilk_tarih = "COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)"
+        son_tarih = "COALESCE(ot.son_alisveris_tarihi, m.olusturma_tarihi)"
+
+        ilk_ay_expr = f"DATE_FORMAT({ilk_tarih}, '%Y-%m')"
+        son_ay_expr = f"DATE_FORMAT({son_tarih}, '%Y-%m')"
+
         cursor.execute(f"""
             SELECT
                 COUNT(DISTINCT m.musteri_id) AS toplam_musteri,
@@ -7936,31 +7941,19 @@ def dashboard_customers(
 
         cursor.execute(f"""
             SELECT
-                CONCAT(
-                    YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                    '-',
-                    LPAD(MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)), 2, '0')
-                ) AS name,
+                {ilk_ay_expr} AS name,
                 COUNT(DISTINCT CASE WHEN COALESCE(ot.siparis_sayisi, 0) <= 1 THEN m.musteri_id END) AS yeni,
                 COUNT(DISTINCT CASE WHEN COALESCE(ot.siparis_sayisi, 0) > 1 THEN m.musteri_id END) AS geri_donen
             {joins}
             WHERE {where_sql}
-            GROUP BY
-                YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi))
-            ORDER BY
-                YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi))
+            GROUP BY {ilk_ay_expr}
+            ORDER BY {ilk_ay_expr}
         """, params)
         yeni_vs_geri_donen = cursor.fetchall()
 
         cursor.execute(f"""
             SELECT
-                CONCAT(
-                    YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                    '-',
-                    LPAD(MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)), 2, '0')
-                ) AS cohort,
+                {ilk_ay_expr} AS cohort,
                 COUNT(DISTINCT m.musteri_id) AS toplam,
                 COUNT(DISTINCT CASE WHEN COALESCE(ot.siparis_sayisi, 0) > 1 THEN m.musteri_id END) AS tekrar_eden,
                 ROUND(
@@ -7970,12 +7963,8 @@ def dashboard_customers(
                 ) AS retention
             {joins}
             WHERE {where_sql}
-            GROUP BY
-                YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi))
-            ORDER BY
-                YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi))
+            GROUP BY {ilk_ay_expr}
+            ORDER BY {ilk_ay_expr}
             LIMIT 12
         """, params)
         cohort_analizi = cursor.fetchall()
@@ -8022,11 +8011,7 @@ def dashboard_customers(
 
         cursor.execute(f"""
             SELECT
-                CONCAT(
-                    YEAR(COALESCE(ot.son_alisveris_tarihi, m.olusturma_tarihi)),
-                    '-',
-                    LPAD(MONTH(COALESCE(ot.son_alisveris_tarihi, m.olusturma_tarihi)), 2, '0')
-                ) AS name,
+                {son_ay_expr} AS name,
                 COUNT(DISTINCT CASE
                     WHEN ot.son_alisveris_tarihi IS NULL
                       OR DATEDIFF(CURDATE(), ot.son_alisveris_tarihi) >= 90
@@ -8035,12 +8020,8 @@ def dashboard_customers(
                 END) AS riskli
             {joins}
             WHERE {where_sql}
-            GROUP BY
-                YEAR(COALESCE(ot.son_alisveris_tarihi, m.olusturma_tarihi)),
-                MONTH(COALESCE(ot.son_alisveris_tarihi, m.olusturma_tarihi))
-            ORDER BY
-                YEAR(COALESCE(ot.son_alisveris_tarihi, m.olusturma_tarihi)),
-                MONTH(COALESCE(ot.son_alisveris_tarihi, m.olusturma_tarihi))
+            GROUP BY {son_ay_expr}
+            ORDER BY {son_ay_expr}
         """, params)
         churn_trend = cursor.fetchall()
 
@@ -8094,20 +8075,12 @@ def dashboard_customers(
 
         cursor.execute(f"""
             SELECT
-                CONCAT(
-                    YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                    '-',
-                    LPAD(MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)), 2, '0')
-                ) AS name,
+                {ilk_ay_expr} AS name,
                 ROUND(AVG(COALESCE(l.musteri_yasam_degeri, ot.ltv, 0)), 2) AS value
             {joins}
             WHERE {where_sql}
-            GROUP BY
-                YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi))
-            ORDER BY
-                YEAR(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi)),
-                MONTH(COALESCE(ot.ilk_alisveris_tarihi, m.olusturma_tarihi))
+            GROUP BY {ilk_ay_expr}
+            ORDER BY {ilk_ay_expr}
         """, params)
         ortalama_ltv_trend = cursor.fetchall()
 
