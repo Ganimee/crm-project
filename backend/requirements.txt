@@ -6,8 +6,11 @@ passlib[bcrypt]
 SQLAlchemy
 pymysql
 pandas
+numpy
 openpyxl
 requests
 mysql-connector-python
 evds
 google-generativeai
+email-validator
+python-multipart
