@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, Suspense } from 'react';
 import {
   Eye,
   EyeOff,
@@ -49,11 +49,19 @@ import { useTheme } from '../context/ThemeContext';
 import { useSearchParams } from 'next/navigation';
 
 export default function Musteri360Page() {
+  return (
+    <Suspense fallback={<div>Müşteri verisi yükleniyor...</div>}>
+      <Musteri360Content />
+    </Suspense>
+  );
+}
+
+function Musteri360Content() {
   const { isDarkMode } = useTheme();
   const darkMode = isDarkMode;
   const styles = getStyles(darkMode);
 
-  const API_BASE = 'http://127.0.0.1:8000';
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
   const searchParams = useSearchParams();
   const customerIdFromUrl = searchParams.get('id');
 
@@ -398,7 +406,7 @@ const applyCampaignAndSendMail = async () => {
 const getStoreText = (store) => {
   let text = String(store || '-').trim();
 
-  text = text.replace(/^Mağaza  \s*/i, '');
+  text = text.replace(/^Mağaza\s*/i, '');
 
   text = text.replace(
     /([a-zçğıöşü])([A-ZÇĞİÖŞÜ])/g,
