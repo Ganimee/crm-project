@@ -96,6 +96,7 @@ from fastapi.middleware.cors import CORSMiddleware
 origins = [
     "http://localhost:3000",
     "https://crm-project-yhe99ajkg-ganimees-projects.vercel.app",
+    "https://crm-project-rust.vercel.app",
     "https://crm-project.vercel.app",
 ]
 
