@@ -7253,7 +7253,7 @@ def month_expr(date_col):
 
 
 def month_group(date_col):
-    return f"YEAR({date_col}), MONTH({date_col})"
+    return f"CONCAT(YEAR({date_col}), '-', LPAD(MONTH({date_col}), 2, '0'))"
 
 
 def online_case():
