@@ -10,3 +10,4 @@ openpyxl
 requests
 mysql-connector-python
 evds
+google-generativeai
