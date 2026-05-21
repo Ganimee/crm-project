@@ -15,7 +15,13 @@ def get_connection():
     )
 
     cursor = conn.cursor()
-    cursor.execute("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))")
+
+    cursor.execute("""
+        SET SESSION sql_mode = (
+            SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', '')
+        )
+    """)
+
     cursor.close()
 
     return conn
