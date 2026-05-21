@@ -92,9 +92,11 @@ MAIL_PORT = int(os.getenv("MAIL_PORT", "587"))
 
 from fastapi.middleware.cors import CORSMiddleware
 
+
 origins = [
     "http://localhost:3000",
     "https://crm-project-yhe99ajkg-ganimees-projects.vercel.app",
+    "https://crm-project.vercel.app",
 ]
 
 app.add_middleware(
