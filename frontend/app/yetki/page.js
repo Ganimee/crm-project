@@ -12,7 +12,6 @@ import {
   Edit3,
   Lock,
   ShieldCheck as ShieldCheckIcon,
-  Trash2,
   X,
 } from 'lucide-react';
 
@@ -368,10 +367,7 @@ export default function YetkilendirmePage() {
               />
             </div>
 
-            <button style={styles.secondaryButton} onClick={openNewUserModal}>
-              <PlusIcon size={16} />
-              Yeni Kullanıcı
-            </button>
+           
           </div>
 
           <table style={styles.table}>
@@ -599,12 +595,7 @@ export default function YetkilendirmePage() {
             </div>
 
             <div style={styles.modalActions}>
-              {editingUser && (
-                <button style={styles.deleteButton} onClick={deleteUser}>
-                  <Trash2 size={16} />
-                  Kullanıcıyı Sil
-                </button>
-              )}
+              
 
               <div style={styles.modalRightActions}>
                 <button style={styles.cancelButton} onClick={closeUserModal}>
