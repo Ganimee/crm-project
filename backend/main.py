@@ -4078,9 +4078,9 @@ def get_customers_by_segment(
 
 
 
-#====================================
+# ====================================
 # DASHBOARD SUMMARY
-#====================================
+# ====================================
 @app.get("/dashboard/summary")
 def get_dashboard_summary(
     date_mode: str = Query("dataset"),
@@ -4093,14 +4093,12 @@ def get_dashboard_summary(
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
 
-        
         cursor.execute("""
             SELECT COUNT(*) AS toplam_musteri
             FROM musteriler
         """)
         toplam_musteri = cursor.fetchone()["toplam_musteri"]
 
-        
         cursor.execute("""
             SELECT
                 COUNT(*) AS toplam_siparis,
@@ -4110,9 +4108,8 @@ def get_dashboard_summary(
                 MAX(siparis_tarihi) AS son_siparis_tarihi
             FROM vw_siparis_gercek
         """)
-        satis_ozeti = cursor.fetchone()
+        satis_ozeti = cursor.fetchone() or {}
 
-        
         cursor.execute("""
             SELECT
                 COUNT(DISTINCT musteri_id) AS analiz_edilen_musteri,
@@ -4122,9 +4119,8 @@ def get_dashboard_summary(
                 ROUND(COALESCE(AVG(son_alisveris_gunu), 0), 2) AS ortalama_son_alisveris_gunu
             FROM rfm_skorlari
         """)
-        rfm_ozeti = cursor.fetchone()
+        rfm_ozeti = cursor.fetchone() or {}
 
-        
         cursor.execute("""
             SELECT
                 ROUND(COALESCE(SUM(musteri_yasam_degeri), 0), 2) AS toplam_ltv,
@@ -4135,9 +4131,8 @@ def get_dashboard_summary(
                 SUM(CASE WHEN risk_seviyesi = 'Yüksek' THEN 1 ELSE 0 END) AS yuksek_riskli_musteri
             FROM ltv_tahminleri
         """)
-        ltv_churn_ozeti = cursor.fetchone()
+        ltv_churn_ozeti = cursor.fetchone() or {}
 
-        
         cursor.execute("""
             SELECT
                 segment,
@@ -4149,7 +4144,6 @@ def get_dashboard_summary(
         """)
         segment_dagilimi = cursor.fetchall()
 
-        
         cursor.execute("""
             SELECT
                 risk_seviyesi,
@@ -4161,7 +4155,6 @@ def get_dashboard_summary(
         """)
         risk_dagilimi = cursor.fetchall()
 
-        
         cursor.execute("""
             SELECT
                 m.musteri_id,
@@ -4181,7 +4174,6 @@ def get_dashboard_summary(
         """)
         en_degerli_musteriler = cursor.fetchall()
 
-        
         cursor.execute("""
             SELECT
                 m.musteri_id,
@@ -4202,16 +4194,15 @@ def get_dashboard_summary(
         """)
         kritik_musteriler = cursor.fetchall()
 
-        
         cursor.execute("""
             SELECT
-                YEAR(siparis_tarihi) AS yil,
-                MONTH(siparis_tarihi) AS ay,
+                DATE_FORMAT(siparis_tarihi, '%Y-%m') AS name,
                 COUNT(*) AS siparis_sayisi,
                 ROUND(COALESCE(SUM(gercek_tutar), 0), 2) AS toplam_ciro
             FROM vw_siparis_gercek
-            GROUP BY YEAR(siparis_tarihi), MONTH(siparis_tarihi)
-            ORDER BY yil, ay
+            WHERE siparis_tarihi IS NOT NULL
+            GROUP BY DATE_FORMAT(siparis_tarihi, '%Y-%m')
+            ORDER BY DATE_FORMAT(siparis_tarihi, '%Y-%m')
         """)
         aylik_ciro_trendi = cursor.fetchall()
 
@@ -4220,11 +4211,11 @@ def get_dashboard_summary(
         return {
             "genel_ozet": {
                 "toplam_musteri": toplam_musteri,
-                "toplam_siparis": satis_ozeti["toplam_siparis"],
-                "toplam_ciro": satis_ozeti["toplam_ciro"],
-                "ortalama_siparis_tutari": satis_ozeti["ortalama_siparis_tutari"],
-                "ilk_siparis_tarihi": satis_ozeti["ilk_siparis_tarihi"],
-                "son_siparis_tarihi": satis_ozeti["son_siparis_tarihi"]
+                "toplam_siparis": satis_ozeti.get("toplam_siparis", 0),
+                "toplam_ciro": satis_ozeti.get("toplam_ciro", 0),
+                "ortalama_siparis_tutari": satis_ozeti.get("ortalama_siparis_tutari", 0),
+                "ilk_siparis_tarihi": satis_ozeti.get("ilk_siparis_tarihi"),
+                "son_siparis_tarihi": satis_ozeti.get("son_siparis_tarihi"),
             },
             "rfm_ozeti": rfm_ozeti,
             "ltv_churn_ozeti": ltv_churn_ozeti,
@@ -4232,10 +4223,11 @@ def get_dashboard_summary(
             "risk_dagilimi": risk_dagilimi,
             "en_degerli_musteriler": en_degerli_musteriler,
             "kritik_musteriler": kritik_musteriler,
-            "aylik_ciro_trendi": aylik_ciro_trendi
+            "aylik_ciro_trendi": aylik_ciro_trendi,
         }
 
     except Exception as e:
+        print("Dashboard summary hata:", str(e))
         raise HTTPException(
             status_code=500,
             detail=f"Dashboard özet hatası: {str(e)}"
@@ -4244,8 +4236,6 @@ def get_dashboard_summary(
     finally:
         if conn and conn.is_connected():
             conn.close()
-
-
 #========================================
 #EXPORT FULL
 #========================================
