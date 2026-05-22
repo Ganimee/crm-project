@@ -24,10 +24,7 @@ import {
   Info,
   Maximize2,
   Sparkles,
-  Loader2,
-  RefreshCw,
   CheckCircle2,
-  SlidersHorizontal,
   CalendarClock,
   Activity,
   Database,
@@ -423,10 +420,6 @@ export default function RfmAnalizPage() {
           
         </div>
 
-        <div style={styles.aiStatus}>
-          {isPageLoading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-          {isPageLoading ? 'Veriler Yükleniyor' : 'AI Motoru Aktif'}
-        </div>
       </header>
 
       <section style={{ ...cardStyle(colors), marginBottom: 26 }}>
@@ -493,84 +486,7 @@ export default function RfmAnalizPage() {
         <StatCard colors={colors} icon={AlertTriangle} label="Riskli Müşteri" value={stats.riskCount} tone="orange" />
       </div>
 
-      <section style={{ ...cardStyle(colors), marginBottom: 26 }}>
-        <div style={cardTitleStyle(colors)}>
-          <SlidersHorizontal size={19} color="#dc2626" />
-          RFM Motor Ayarları
-
-          
-        </div>
-
-        <div style={styles.rfmMotorGrid}>
-          <div style={styles.innerCardSoft}>
-            <h3 style={styles.innerTitle}>Segment Mantığı</h3>
-
-            <p style={styles.innerText}>
-              Recency, Frequency ve Monetary eşiklerini değiştirerek segment
-              hesaplama davranışını kontrol edebilirsin.
-            </p>
-
-            <div style={styles.settingGrid}>
-              <SettingRow colors={colors} label="Recency Gün" value={rfmSettings.recencyDays} onChange={(value) => handleRfmSettingChange('recencyDays', Number(value))} />
-              <SettingRow colors={colors} label="Frequency Min" value={rfmSettings.frequencyMin} onChange={(value) => handleRfmSettingChange('frequencyMin', Number(value))} />
-              <SettingRow colors={colors} label="Frequency Max" value={rfmSettings.frequencyMax} onChange={(value) => handleRfmSettingChange('frequencyMax', Number(value))} />
-              <SettingRow colors={colors} label="Monetary Min" value={rfmSettings.monetaryMin} onChange={(value) => handleRfmSettingChange('monetaryMin', Number(value))} />
-              <SettingRow colors={colors} label="Monetary Max" value={rfmSettings.monetaryMax} onChange={(value) => handleRfmSettingChange('monetaryMax', Number(value))} />
-            </div>
-          </div>
-
-          <div style={styles.innerCard}>
-            <div style={styles.smallTitleRow}>
-              <Sparkles size={18} color="#dc2626" />
-              <h3 style={styles.innerTitle}>AI Stratejik Analiz</h3>
-
-              <button
-                onClick={() => generateAIAnalysis()}
-                disabled={isAiLoading}
-                style={styles.aiRefreshButton}
-              >
-                <RefreshCw size={15} className={isAiLoading ? 'animate-spin' : ''} />
-              </button>
-            </div>
-
-            <div style={styles.aiTextBox}>
-              {isAiLoading ? (
-                <div style={styles.aiLoadingBox}>
-                  <Loader2 size={28} color="#dc2626" className="animate-spin" />
-                  <p>Veriler analiz ediliyor...</p>
-                </div>
-              ) : (
-                aiInsight
-              )}
-            </div>
-
-            <div style={styles.aiSource}>
-              <Info size={13} />
-              Analiz Kaynağı: CRM RFM Veri Modeli
-            </div>
-          </div>
-
-          <div style={styles.rfmButtonWrapper}>
-            <button
-              onClick={runRfmRecalculate}
-              disabled={isRfmRunning}
-              style={styles.rfmCalcButton}
-            >
-              {isRfmRunning ? (
-                <>
-                  <Loader2 size={20} className="animate-spin" />
-                  Hesaplanıyor
-                </>
-              ) : (
-                <>
-                  <RefreshCw size={20} />
-                  RFM Hesapla
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </section>
+     
 
       <div style={styles.matrixGrid}>
         <section style={cardStyle(colors)}>

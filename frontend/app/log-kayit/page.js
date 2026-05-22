@@ -311,7 +311,7 @@ const exportCsv = async () => {
       <div style={styles.header}>
         <div>
           <h1 style={styles.title}>
-            Yetki <span style={styles.redText}>Yönetimi</span>
+            Log <span style={styles.redText}>Kayıtları</span>
           </h1>
       
         </div>

@@ -17,7 +17,7 @@ import {
   RotateCcw,
   Package,
   PieChart,
-  Crown,
+  
   Loader2,
   CalendarDays ,
 } from 'lucide-react';
@@ -799,8 +799,6 @@ useEffect(() => {
       <FilterSelect styles={styles} label="Şehir" icon={MapPin} value={city} onChange={setCity} options={filterOptions.cities} />
       <FilterSelect styles={styles} label="Segment" icon={PieChart} value={segment} onChange={setSegment} options={filterOptions.segments} />
       <FilterSelect styles={styles} label="Risk Durumu" icon={AlertTriangle} value={riskStatus} onChange={setRiskStatus} options={['Tümü', 'Riskli', 'Normal']} />
-      <FilterSelect styles={styles} label="VIP Filtre" icon={Crown} value={vipFilter} onChange={setVipFilter} options={['Tümü', 'VIP', 'VIP Değil']} />
-
       <FilterInput styles={styles} label="Min LTV" type="number" value={minLtv} onChange={setMinLtv} placeholder="₺ min" />
       <FilterInput styles={styles} label="Min Frequency" type="number" value={minFrequency} onChange={setMinFrequency} placeholder="min alışveriş" />
       <FilterInput styles={styles} label="Son Alışveriş Tarihi" type="date" value={lastPurchaseDate} onChange={setLastPurchaseDate} />
@@ -932,25 +930,7 @@ useEffect(() => {
             </div>
           </ChartCard>
 
-          <ChartCard styles={styles} title="Satış Kanalı Dağılımı" description="Online / Mağaza">
-            <div style={styles.mediumChart}>
-              {salesChannelData.length === 0 ? (
-                <EmptyChart styles={styles} />
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <RePieChart>
-                    <Pie data={salesChannelData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={80}>
-                      {salesChannelData.map((entry, index) => (
-                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={styles.tooltipStyle} />
-                    <Legend />
-                  </RePieChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-          </ChartCard>
+         
         </div>
       </div>
     </>

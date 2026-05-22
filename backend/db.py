@@ -11,10 +11,17 @@ def get_connection():
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME"),
         port=int(os.getenv("DB_PORT", 3306)),
+        charset="utf8mb4",
+        collation="utf8mb4_unicode_ci",
+        use_unicode=True,
         ssl_disabled=False
     )
 
     cursor = conn.cursor()
+
+    cursor.execute("""
+        SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+    """)
 
     cursor.execute("""
         SET SESSION sql_mode = (
